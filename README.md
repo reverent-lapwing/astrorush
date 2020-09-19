@@ -1,11 +1,13 @@
-# Summary
+## Summary
 
 Astrorush is an abstract space mining simulator imlemented in Love.
 
-# Build instructions
+## Build instructions
 
-Directory _Astrorush/src/_ can be run as described in [https://love2d.org/].
+This game requires Love 11.3 to be installed on your system. Stand-alone executable is planned for future versions.
 
-# Links
+Directory _Astrorush/src/_ can be run on any platform as described in [https://love2d.org/].
 
-If you like this project, you can support me on [Patreon](https://www.patreon.com/bePatron?u=31958284) or [Buy Me A Coffee](http://buymeacoffee.com/NgfEouS).
+## Links
+
+If you like this project, you can support me on [Patreon](https://www.patreon.com/atenaswoja) or [Buy Me A Coffee](http://buymeacoffee.com/NgfEouS).
