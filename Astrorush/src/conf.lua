@@ -1,8 +1,8 @@
 function love.conf(t)
 	t.title = "Astrorush"
-	t.author = "RCP nINC."
-	t.screen.width = 400
-	t.screen.height = 300
+	t.author = "Atena Swoja"
+	t.window.width = 400
+	t.window.height = 300
 	t.identity = "astrorush"
 	t.modules.joystick = false
 	t.modules.audio = true

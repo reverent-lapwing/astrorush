@@ -23,7 +23,8 @@ function love.load()
 	tut = "Gameplay Tip: Use "..keyBind.en_t..", "..keyBind.en_b..", "..keyBind.en_bl..", "..keyBind.en_br..", "..keyBind.en_tl.." and "..keyBind.en_tr.." to operate engines, use mouse buttons to operate laser and shields. Try to get as many points as you can without crashing. Good luck!"
 
 	love.graphics.setBackgroundColor(0,0,0)
-	love.graphics.setLine(2, "rough")
+	love.graphics.setLineWidth(2)
+	love.graphics.setLineStyle("rough")
 	love.graphics.setPointSize(2)
 	
 	font = love.graphics.setNewFont("pcsenior.ttf")
@@ -44,13 +45,13 @@ function love.load()
 		collisionParticles = true
 		writefile = true
 
-		if love.filesystem.isFile("config.lua") then
+		if love.filesystem.getInfo("config.lua").type == file then
 			dofile("config.lua")
 		end
 	end)
 	
 	load(function()
-		if love.graphics.isSupported("pixeleffect") then
+	      if love.graphics.getSupported()["pixeleffect"] then
 			greyOut = love.graphics.newPixelEffect[[
 			vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 pixel_coords)
 			{
@@ -113,7 +114,7 @@ function love.load()
 	
 	sup = load (function()	
 		if writefile then
-			if not love.filesystem.isFile("scores.txt") then
+			if not love.filesystem.getInfo("scores.txt").type == file then
 				love.filesystem.write("scores.txt","Mad Joe - 1 000 000\r\nLovely Lary - 290 000\r\nNoShield Johny - 120 000\r\nGo Power - 80 000\r\nMaria the Female-one - 36 000\r\nOne-eyed Tim - 13 000\r\nBestmen - 5 700\r\nusername - 3 300\r\nThat Guy - 1 200\r\nloler - 1")
 			end
 			
@@ -130,8 +131,8 @@ function love.load()
 
 	if sup then sup() else writefile = false end
 
-	mus1 = love.audio.newSource("astr1.wav")
-	mus2 = love.audio.newSource("astr2.wav")
+	mus1 = love.audio.newSource("astr1.wav", "stream")
+	mus2 = love.audio.newSource("astr2.wav", "stream")
 	
 	bob = true
 	
@@ -175,8 +176,8 @@ function love.load()
 	love.graphics.printf("Loading",0,love.graphics.getHeight()/3,love.graphics.getWidth(),"center")
 	love.graphics.printf("+++--",0,love.graphics.getHeight()/2,love.graphics.getWidth(),"center")
 	love.graphics.present()
-	
-	love.graphics.setIcon(love.graphics.newImage("Rysunek.png"))
+
+	--love.window.setIcon(love.image.newImage("Rysunek.png"))
 	
 	speakerOn = love.graphics.newImage("speaker.png")
 	speakerOff = love.graphics.newImage("no_speaker.png")
@@ -288,13 +289,13 @@ function love.load()
 			if not help then pause = not pause ppause = not ppause end
 			
 			if pause then
-				love.graphics.setPixelEffect(greyOut)
+				love.graphics.setShader(greyOut)
 			else
-				love.graphics.setPixelEffect()
+				love.graphics.setShader()
 			end
 		end,
 		[" "] = function()
-			if deathmess then love.graphics.setPixelEffect(greyOut) LoadStuff() end
+			if deathmess then love.graphics.setShader(greyOut) LoadStuff() end
 		end,
 		["self_dest"] = function()
 			if not deathmess then colisions.ship = true end
@@ -305,11 +306,11 @@ function love.load()
 			if help then
 				pause = true
 				ppause = true
-				love.graphics.setPixelEffect(greyOut)
+				love.graphics.setShader(greyOut)
 			else
 				pause = false
 				ppause = false
-				love.graphics.setPixelEffect()
+				love.graphics.setShader()
 			end
 		end,
 		["f2"] = function()
@@ -338,9 +339,9 @@ function love.load()
 			ppause = not ppause
 			
 			if pause then
-				love.graphics.setPixelEffect(greyOut)
+				love.graphics.setShader(greyOut)
 			else
-				love.graphics.setPixelEffect()
+				love.graphics.setShader()
 			end
 			
 			if help then help = false end
@@ -352,7 +353,7 @@ function love.load()
 					got = 11
 				end
 
-				love.graphics.setPixelEffect()
+				love.graphics.setShader()
 				LoadStuff()	
 			end
 		end,
@@ -388,7 +389,7 @@ function love.load()
 			end
 		end,
 		any = function()
-			if inmess then love.graphics.setPixelEffect() inmess = false pause = false end
+			if inmess then love.graphics.setShader() inmess = false pause = false end
 		end
 	}
 	keyrel = {
@@ -477,13 +478,13 @@ function love.load()
 	love.event.wait()
 
 	
-	love.graphics.setPixelEffect(greyOut)
-	love.graphics.setMode(screenWidth, screenHeight, fullscreen)
+	love.graphics.setShader(greyOut)
+	love.window.setMode(screenWidth, screenHeight, fullscreen)
 	
 	mus1:play()
 	
 	step = 1 / 60
-	timePast = love.timer.getMicroTime()
+	timePast = love.timer.getTime()
 end
 
 function love.update(e)
@@ -1013,8 +1014,8 @@ function love.update(e)
 end
 
 function love.draw()
-	pix = love.graphics.getPixelEffect()
-	love.graphics.setPixelEffect(pix)
+	pix = love.graphics.getShader()
+	love.graphics.setShader(pix)
 	
 	love.graphics.setBackgroundColor( 0, 0, 0 )
 	
@@ -1023,7 +1024,7 @@ function love.draw()
 		if v[4] then
 			love.graphics.setColor(0xff,0xff,0xff,v[3])
 		
-			love.graphics.point(v[4],v[5])
+			love.graphics.points(v[4],v[5])
 		end
 	end
 		
@@ -1061,7 +1062,7 @@ function love.draw()
 		DrawCursor()
 	end
 	
-	love.graphics.setPixelEffect()
+	love.graphics.setShader()
 	
 	for k,v in pairs(txtList) do
 		love.graphics.setColor(0xbd,0xb7,0x6b,v[4])
@@ -1169,7 +1170,7 @@ function love.draw()
 			
 		for	k,v in pairs(drawList[102]) do 
 			love.graphics.setColor(objects[v].col[1],objects[v].col[2],objects[v].col[3],0xff)
-			love.graphics.triangle("fill",objects[v].vertices[1],objects[v].vertices[2],objects[v].vertices[3],objects[v].vertices[4],objects[v].vertices[5],objects[v].vertices[6])
+			love.graphics.polygon("fill",objects[v].vertices[1],objects[v].vertices[2],objects[v].vertices[3],objects[v].vertices[4],objects[v].vertices[5],objects[v].vertices[6])
 		
 			love.graphics.setColor(0xff,0xff,0xff,100)
 			love.graphics.line(objects[v].vertices[1],objects[v].vertices[2],screenWidth/2-200,screenHeight/2-40)
@@ -1225,9 +1226,9 @@ function love.draw()
 		love.graphics.print("sensors",0,screenHeight-16)
 	end
 	
-	love.graphics.setPixelEffect(pix)
+	love.graphics.setShader(pix)
 	
-	local timeNow = love.timer.getMicroTime()
+	local timeNow = love.timer.getTime()
 	if timePast <= timeNow then
 		timePast = timeNow
 		return
