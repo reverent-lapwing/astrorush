@@ -1022,7 +1022,7 @@ function love.draw()
 	
 	for k,v in pairs(ptList) do
 		if v[4] then
-			love.graphics.setColor(0xff,0xff,0xff,v[3])
+			love.graphics.setColor(1,1,1,v[3]/255)
 		
 			love.graphics.points(v[4],v[5])
 		end
@@ -1031,7 +1031,7 @@ function love.draw()
 	for m,tab in spairs(drawList) do
 		if liList[m] then
 			for k,v in pairs(liList[m]) do
-				love.graphics.setColor(255,math.random(50),math.random(50),255)
+				love.graphics.setColor(1,math.random(50)/255,math.random(50)/255,1)
 
 				love.graphics.setLine(v[5], "smooth")
 				love.graphics.line(v[6],v[7],v[8],v[9])
@@ -1041,7 +1041,7 @@ function love.draw()
 		
 		for k,v in pairs(tab) do
 			if fixedList[m][k] then
-				love.graphics.setColor(objects[v].col)
+			   love.graphics.setColor(objects[v].col[1]/0xff, objects[v].col[2]/0xff, objects[v].col[3]/0xff, objects[v].col[4]/0xff)
 	
 				objects[v]:cam(ofx,ofy,ang)
 					
@@ -1065,7 +1065,7 @@ function love.draw()
 	love.graphics.setShader()
 	
 	for k,v in pairs(txtList) do
-		love.graphics.setColor(0xbd,0xb7,0x6b,v[4])
+		love.graphics.setColor(0xbd/0xff,0xb7/0xff,0x6b/0xff,v[4]/0xff)
 		local fo = love.graphics.getFont()
 		love.graphics.setFont(mfont)
 		
@@ -1074,7 +1074,7 @@ function love.draw()
 		love.graphics.setFont(font)
 	end
 	
-	love.graphics.setColor(255,255,255,255)
+	love.graphics.setColor(1,1,1,1)
 	
 	if mute then
 		love.graphics.draw(speakerOff,screenWidth-92,0)
@@ -1094,9 +1094,9 @@ function love.draw()
 	if not hiscore then
 		love.graphics.print("fuel:\nscore:",0,0)
 		love.graphics.print("\n"..score,100,0)
-		love.graphics.setColor(0xcf+(fuel/muel)*0x30,0x10+(fuel/muel)*0xef,0x20+(fuel/muel)*0xdf,0xff)
+		love.graphics.setColor((0xcf+(fuel/muel)*0x30)/0xff,(0x10+(fuel/muel)*0xef)/0xff,(0x20+(fuel/muel)*0xdf)/0xff,1)
 		love.graphics.print(math.floor(fuel+0.5),100,0)
-		love.graphics.setColor(0xff,0xff,0xff,0xff)
+		love.graphics.setColor(1,1,1,1)
 	end
 	
 	if pause then love.graphics.printf("PAUSED",0,20,love.graphics.getWidth(),"center") end
@@ -1126,10 +1126,10 @@ function love.draw()
 			for k,v in pairs(scores) do
 				if k == got then
 					love.graphics.printf(k..". "..user,0,screenHeight/2-120+shift,screenWidth,"left")
-					if blink > 10 then love.graphics.setColor(255,255,255,0) blink = blink+1 else love.graphics.setColor(255,255,255,255) blink = blink+1 end
+					if blink > 10 then love.graphics.setColor(1,1,1,0) blink = blink+1 else love.graphics.setColor(1,1,1,1) blink = blink+1 end
 					if blink > 20 then blink = 0 end					
 					love.graphics.printf(k..". "..user.."_",0,screenHeight/2-120+shift,screenWidth,"left")
-					love.graphics.setColor(255,255,255,255)
+					love.graphics.setColor(1,1,1,1)
 					love.graphics.printf(" - ",0,screenHeight/2-120+shift,screenWidth,"center")
 					love.graphics.printf(v[2],0,screenHeight/2-120+shift,screenWidth,"right")
 					shift = shift + 20
@@ -1149,41 +1149,41 @@ function love.draw()
 			pix = redOut
 		else
 			love.graphics.setFont(bfont)
-			love.graphics.setColor(0xda,0x8a,0x67,255)
+			love.graphics.setColor(0xda/0xff,0x8a/0xff,0x67/0xff,1)
 			love.graphics.printf("Dead already?\nOh well...",0,love.graphics.getHeight()*1/3,love.graphics.getWidth(),"center")
 			love.graphics.setFont(font)
 			love.graphics.printf("Your score: "..score.."\n\n\n\n\n[[Press space to try again]]",0,love.graphics.getHeight()*2/3,love.graphics.getWidth(),"center")
 			if writefile then
 				love.graphics.print("Press F2 to see hi-scores",0,screenHeight-20)
 			end
-			love.graphics.setColor(255,255,255,255)
+			love.graphics.setColor(1,1,1,1)
 			pix = redOut
 		end
 	end
 	
 	if help then
-		love.graphics.setColor(0xff,0xff,0xff,100)
+		love.graphics.setColor(1,1,1,100/0xff)
 		
 		love.graphics.rectangle("fill",screenWidth/2-35,screenHeight/2-60,70,120)
 		
 		love.graphics.setFont(mbfont)
 			
 		for	k,v in pairs(drawList[102]) do 
-			love.graphics.setColor(objects[v].col[1],objects[v].col[2],objects[v].col[3],0xff)
+			love.graphics.setColor(objects[v].col[1]/0xff,objects[v].col[2]/0xff,objects[v].col[3]/0xff,1)
 			love.graphics.polygon("fill",objects[v].vertices[1],objects[v].vertices[2],objects[v].vertices[3],objects[v].vertices[4],objects[v].vertices[5],objects[v].vertices[6])
 		
-			love.graphics.setColor(0xff,0xff,0xff,100)
+			love.graphics.setColor(1,1,1,100/255)
 			love.graphics.line(objects[v].vertices[1],objects[v].vertices[2],screenWidth/2-200,screenHeight/2-40)
 		end
 		
-		love.graphics.setColor(0xff,0xff,0xff,0xff)
+		love.graphics.setColor(1,1,1,1)
 		
 		love.graphics.printf(keyConst[keyBind.sens] or keyBind.sens,screenWidth/2-500,screenHeight/2-58,300,"right")
 		love.graphics.printf(keyConst[keyBind.shld] or keyBind.shld,screenWidth/2-500,screenHeight/2+38,300,"right")
 		
 		love.graphics.line(screenWidth/2-35,screenHeight/2,screenWidth/2-200,screenHeight/2+58)
 		
-		love.graphics.setColor(0xfc,0xf7,0x5e,0xff)
+		love.graphics.setColor(0xfc/0xff,0xf7/0xff,0x5e/0xff,1)
 		
 		love.graphics.printf(keyConst[keyBind.en_t] or keyBind.en_t,screenWidth/2-55,screenHeight/2-105,110,"center")
 		love.graphics.printf(keyConst[keyBind.en_b] or keyBind.en_b,screenWidth/2-55,screenHeight/2+65,110,"center")
@@ -1197,16 +1197,16 @@ function love.draw()
 		angle = angle or 0
 		angle = angle - 0.01
 		
-		love.graphics.setColor(0x36,0x45,0x4f,0xff)
+		love.graphics.setColor(0x36/0xff,0x45/0xff,0x4f/0xff,1)
 		love.graphics.polygon('fill',screenWidth/2+250+math.sin(angle)*100,screenHeight/2-150+math.cos(angle)*100,screenWidth/2+250+math.sin(angle+math.pi/2)*100,screenHeight/2-150+math.cos(angle+math.pi/2)*100,screenWidth/2+250+math.sin(angle+math.pi)*100,screenHeight/2-150+math.cos(angle+math.pi)*100,screenWidth/2+250+math.sin(angle+math.pi*3/2)*100,screenHeight/2-150+math.cos(angle+math.pi*3/2)*100)
 		
-		love.graphics.setColor(0x9f,0x81,0x70,255)
+		love.graphics.setColor(0x9f/0xff,0x81/0xff,0x70/0xff,1)
 		love.graphics.polygon('fill',screenWidth/2+250+math.sin(angle)*50,screenHeight/2+math.cos(angle)*50,screenWidth/2+250+math.sin(angle+math.pi*2/5)*50,screenHeight/2+math.cos(angle+math.pi*2/5)*50,screenWidth/2+250+math.sin(angle+math.pi*4/5)*50,screenHeight/2+math.cos(angle+math.pi*4/5)*50,screenWidth/2+250+math.sin(angle+math.pi*6/5)*50,screenHeight/2+math.cos(angle+math.pi*6/5)*50,screenWidth/2+250+math.sin(angle+math.pi*8/5)*50,screenHeight/2+math.cos(angle+math.pi*8/5)*50)
 		
-		love.graphics.setColor(0x87,0x97,0x79,255)
+		love.graphics.setColor(0x87/0xff,0x97/0xff,0x79/0xff,1)
 		love.graphics.polygon('fill',screenWidth/2+250+math.sin(angle)*20,screenHeight/2+150+math.cos(angle)*20,screenWidth/2+250+math.sin(angle+math.pi*2/5)*20,screenHeight/2+150+math.cos(angle+math.pi*2/5)*20,screenWidth/2+250+math.sin(angle+math.pi*4/5)*20,screenHeight/2+150+math.cos(angle+math.pi*4/5)*20,screenWidth/2+250+math.sin(angle+math.pi*6/5)*20,screenHeight/2+150+math.cos(angle+math.pi*6/5)*20,screenWidth/2+250+math.sin(angle+math.pi*8/5)*20,screenHeight/2+150+math.cos(angle+math.pi*8/5)*20)
 		
-		love.graphics.setColor(0xff,0xff,0xff,0xff)
+		love.graphics.setColor(1,1,1,1)
 		
 		love.graphics.printf('refuel here',screenWidth/2,screenHeight/2-158,500,'center')
 		love.graphics.printf('shoop da whoop these',screenWidth/2+100,screenHeight/2-8,300,'center')
@@ -1218,11 +1218,11 @@ function love.draw()
 		love.graphics.setFont(font)
 	end
 	
-	love.graphics.setColor(255,255,255,255)
+	love.graphics.setColor(1,1,1,1)
 
 	if not help and not deathmess then
 		love.graphics.printf("Need some help?\nWaggle that F1 button!",0,screenHeight-30,screenWidth,"right")
-		if sensors then love.graphics.setColor(0x8D,0xB6,0x00) else love.graphics.setColor(0xCE,0x20,0x29) end
+		if sensors then love.graphics.setColor(0x8D/0xff,0xB6/0xff,0) else love.graphics.setColor(0xCE/0xff,0x20/0xff,0x29/0xff) end
 		love.graphics.print("sensors",0,screenHeight-16)
 	end
 	
@@ -1815,9 +1815,9 @@ function DrawCursor(col,x,y)
 	local col = col or {255,255,255,120}
 	
 	return load(function()
-		love.graphics.setColor(col[1],col[2],col[3],col[4])
+		love.graphics.setColor(col[1]/0xff,col[2]/0xff,col[3]/0xff,col[4]/0xff)
 		love.graphics.circle("line",x or love.mouse.getX(),y or love.mouse.getY(),8,100)
-		love.graphics.setColor(0xff,0xff,0xff,0xff)
+		love.graphics.setColor(1,1,1,1)
 	end)
 end
 
