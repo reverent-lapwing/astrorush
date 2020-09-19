@@ -1033,9 +1033,11 @@ function love.draw()
 			for k,v in pairs(liList[m]) do
 				love.graphics.setColor(1,math.random(50)/255,math.random(50)/255,1)
 
-				love.graphics.setLine(v[5], "smooth")
+				love.graphics.setLineWidth(v[5])
+				love.graphics.setLineStyle("smooth")
 				love.graphics.line(v[6],v[7],v[8],v[9])
-				love.graphics.setLine(2, "rough")
+				love.graphics.setLineWidth(2)
+				love.graphics.setLineStyle("rough")
 			end
 		end
 		
@@ -1273,13 +1275,13 @@ end
 function love.mousepressed(x,y,key)
 	keypress.any(key)
 	
-	if key == "l" then
+	if key == 1 then
 		pressed["lmb"] = "true"
 		
 		if keypress.lmb then
 			keypress.lmb()
 		end
-	elseif key == "r" then
+	elseif key == 2 then
 		pressed["rmb"] = "true"
 		
 		if keypress.rmb then
@@ -1299,9 +1301,9 @@ function love.mousepressed(x,y,key)
 end
 
 function love.mousereleased(x,y,key)
-	if key == "l" then
+	if key == 1 then
 		pressed["lmb"] = "false"
-	elseif key == "r" then
+	elseif key == 2 then
 		pressed["rmb"] = "false"
 	else
 		pressed[key] = "false"
