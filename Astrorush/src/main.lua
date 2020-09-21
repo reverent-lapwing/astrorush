@@ -294,7 +294,7 @@ function love.load()
 				love.graphics.setShader()
 			end
 		end,
-		[" "] = function()
+		["space"] = function()
 			if deathmess then love.graphics.setShader(greyOut) LoadStuff() end
 		end,
 		["self_dest"] = function()
@@ -414,7 +414,7 @@ function love.load()
 	end
 	
 	keyConst = {
-		[" "] = "space",
+		["space"] = "space",
 		["kp0"] = 'numpad 0',
 		["kp1"] = 'numpad 1',
 		["kp2"] = 'numpad 2',
@@ -1255,9 +1255,13 @@ function love.keypressed(key,uni)
 		pressed[key] = true
 	elseif key == "backspace" then
 		user = string.sub(user,1,string.len(user)-1)
-	elseif (string.find(string.char(uni),"%a") or string.find(string.char(uni),"%s") or string.find(string.char(uni),"-")) and string.len(user)<20 then
-		user = user..string.char(uni)
 	end
+end
+
+function love.textinput(t)
+   if hiscore then
+      user = user..t
+   end
 end
 
 function love.keyreleased(key)
