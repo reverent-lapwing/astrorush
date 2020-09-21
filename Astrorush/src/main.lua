@@ -1283,7 +1283,7 @@ function love.keypressed(key,uni)
 end
 
 function love.textinput(t)
-   if hiscore then
+   if hiscore and string.len(user) < 20 then
       user = user..t
    end
 end
