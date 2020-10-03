@@ -21,6 +21,9 @@ love src/
 ** TODO "Back to main menu" from pause
 ** TODO "Back to main menu" from death screen
 ** TODO No music in main menu
+
+Music in main menu must be different from game music.
+
 ** TODO No sound effects on button press
 ** TODO No visual effect on button hover
 ** TODO Window should fit the screen by default
