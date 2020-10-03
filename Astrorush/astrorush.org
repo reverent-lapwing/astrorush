@@ -1,0 +1,60 @@
+* Run
+
+#+begin_src sh :tangle run.sh :results output :session y
+love src/
+#+end_src
+
+#+RESULTS:
+
+* Edit
+
+[[file:src/][src/]]
+
+* Issues
+
+** TODO Refactorization of code to allow easier modifications
+** TODO Menu needs start button
+** TODO Menu needs help button/screen
+** TODO Menu needs settings button/screen
+** TODO Background in menu
+** TODO Pause menu have all buttons from main menu
+** TODO "Back to main menu" from pause
+** TODO "Back to main menu" from death screen
+** TODO No music in main menu
+** TODO No sound effects on button press
+** TODO No visual effect on button hover
+** TODO Window should fit the screen by default
+** TODO Window cannot be resized
+** TODO Laser doesn't make any sound
+** TODO Crashing doesn't make any sound
+** TODO Fullscreen does not scale properly
+** TODO Window icon doesn't load
+** TODO More unified style - vector over pixel-art
+** TODO UI needs to be reworked
+** TODO Automatic updates with GitHub
+** TODO Dim laser outline appears on press, laser shoots on release
+** DONE Menu before game starts
+** DONE Cannot exit a game
+** DONE Error when entering name for a best score
+
+#+RESULTS:
+#+begin_example
+Error
+
+main.lua:1258: bad argument #1 to 'char' (number expected, got string)
+
+
+Traceback
+
+[C]: in function 'char'
+main.lua:1258: in function <main.lua:1243>
+[C]: in function 'xpcall'
+#+end_example
+
+** DONE Space button doesn't work
+** DONE Laser doesn't work
+:LOGBOOK:
+CLOCK: [2020-09-19 Sat 22:52]--[2020-09-19 Sat 22:57] =>  0:05
+:END:
+** DONE All colors are white
+** DONE Booting does not work   

@@ -1,7 +1,22 @@
+uid_counter = 0
+
 assets = {
    images = {},
    audio = {},
    fonts = {}
+}
+
+monitors = {
+   update = {},
+   draw = {},
+   mousereleased = {},
+   mousepressed = {},
+   keypressed = {},
+   keyreleased = {}
+}
+
+scenes = {
+   menu = {}
 }
 
 function draw_splash(tut, loading_status)
@@ -129,10 +144,10 @@ function load_images()
    -- overrides previous assets.images
    assets.images = {
       logo = assets.images.logo, -- logo was already loaded
-      speakerOn = love.graphics.newImage("speaker.png"),
-      speakerOff = love.graphics.newImage("no_speaker.png"),
-      boom = love.graphics.newImage("boom.png"),
-      fullscreen = love.graphics.newImage("fullscreen.png")
+      speakerOn = love.graphics.newImage("img/speaker.png"),
+      speakerOff = love.graphics.newImage("img/no_speaker.png"),
+      boom = love.graphics.newImage("img/boom.png"),
+      fullscreen = love.graphics.newImage("img/fullscreen.png")
    }
 end
 
@@ -156,9 +171,11 @@ end
 function love.load()
    local loading_status = 0
 
+   modes = love.window.getFullscreenModes()
+   
    screenWidth = 800
    screenHeight = 600
-	
+   
    assets.images.logo = love.graphics.newImage("logo.png")
    
    keyBind = {
@@ -309,8 +326,6 @@ function love.load()
    --love.window.setIcon(love.image.newImage("Rysunek.png"))
 
    load_images()
-   
-   love.mouse.setVisible(false)
    
    keydown = {
       ["en_br"] = bottom_rigth_engine,
@@ -505,13 +520,57 @@ function love.load()
    love.graphics.setShader(greyOut)
    love.window.setMode(screenWidth, screenHeight, fullscreen)
    
-   assets.audio.mus1:play()
-   
    step = 1 / 60
    timePast = love.timer.getTime()
+
+   load_menu()
+   
+   menu_show()
+--   menu_hide()
+
+--   game_start()
 end
 
-function love.update(e)
+function game_start()
+   assets.audio.mus1:play()
+
+   love.mouse.setVisible(false)
+   
+   love.update = game_update
+   love.draw   = game_draw
+end
+
+function load_menu()
+   scenes.menu = {
+      start = button.new(0, screenHeight/2, screenWidth, 50, function() menu_hide(); game_start() end, "START")
+   }
+end
+
+function menu_show()
+   love.mouse.setVisible(true)
+
+   for _, v in ipairs(scenes.menu) do
+      v:show()
+   end
+
+   scenes.menu.start:show()
+   
+   love.update = menu_update
+   love.draw   = menu_draw
+end
+
+function menu_hide()
+   for _, v in ipairs(scenes.menu) do
+      v:hide()
+   end
+end
+
+
+function menu_update(e)
+
+end
+
+function game_update(e)
    timePast = timePast + step
    
    if e > step then
@@ -1037,12 +1096,19 @@ function love.update(e)
    end
 end
 
-function love.draw()
+function menu_draw()
+   love.graphics.draw(assets.images.logo, 0, screenHeight/4)
+
+   for _, v in ipairs(monitors.draw) do
+      v:draw()
+   end
+end
+   
+function game_draw()
    pix = love.graphics.getShader()
    love.graphics.setShader(pix)
    
    love.graphics.setBackgroundColor( 0, 0, 0 )
-   
    
    for k,v in pairs(ptList) do
       if v[4] then
@@ -1259,10 +1325,9 @@ function love.draw()
       timePast = timeNow
       return
    end
+   
    love.timer.sleep(timePast - timeNow)
 end
-
-
 
 function love.keypressed(key,uni)
    if not hiscore or key == "return" or key == "f12" then
@@ -1335,6 +1400,10 @@ function love.mousereleased(x,y,key)
       pressed["rmb"] = "false"
    else
       pressed[key] = "false"
+   end
+
+   for _,v in ipairs(monitors.mousereleased) do
+      v:mousereleased(x,y,key)
    end
 end
 
@@ -1679,6 +1748,10 @@ function DeclareClasses()
    end
 end
 
+function make_gas()
+   return poly.new(screenWidth/2,screenHeight/2,{0,-12,-12*math.cos(math.rad(60)),6,12*math.cos(math.rad(60)),6},"line",{0xfc,0xf7,0x5e,0xff},math.random(100)-50,(math.random(1000)-500)/2,math.random()*math.pi)
+end
+
 function LoadStuff()
    fuel = 5999
    score = 0
@@ -1723,30 +1796,30 @@ function LoadStuff()
       motherShields = poly.new(-100,300,{-440,-440,-440,440,440,440,440,-440},"fill",{0x36,0x45,0x4f,120}),
       pointer = poly.new(screenWidth/2,screenHeight/2,{0,200,-10,80,10,80},"fill"),
       
-      ast1 = poly.new(screenWidth-200,screenHeight/2,{0,-40,-20*math.cos(math.rad(18)),-20*math.sin(math.rad(18)),-20*math.sin(math.rad(36)),20*math.cos(math.rad(36)),20*math.sin(math.rad(36)),20*math.cos(math.rad(36)),20*math.cos(math.rad(18)),-20*math.sin(math.rad(18))},"fill",{0x9f,0x81,0x70,255},-40,-25,-2),
+      ast1  = poly.new(screenWidth-200,screenHeight/2,{0,-40,-20*math.cos(math.rad(18)),-20*math.sin(math.rad(18)),-20*math.sin(math.rad(36)),20*math.cos(math.rad(36)),20*math.sin(math.rad(36)),20*math.cos(math.rad(36)),20*math.cos(math.rad(18)),-20*math.sin(math.rad(18))},"fill",{0x9f,0x81,0x70,255},-40,-25,-2),
       
-      gas1 = poly.new(screenWidth/2,screenHeight/2,{0,-12,-12*math.cos(math.rad(60)),6,12*math.cos(math.rad(60)),6},"line",{0xfc,0xf7,0x5e,0xff},math.random(100)-50,(math.random(1000)-500)/2,math.random()*math.pi),
-      gas2 = poly.new(screenWidth/2,screenHeight/2,{0,-12,-12*math.cos(math.rad(60)),6,12*math.cos(math.rad(60)),6},"line",{0xfc,0xf7,0x5e,0xff},math.random(100)-50,(math.random(1000)-500)/2,math.random()*math.pi),
-      gas3 = poly.new(screenWidth/2,screenHeight/2,{0,-12,-12*math.cos(math.rad(60)),6,12*math.cos(math.rad(60)),6},"line",{0xfc,0xf7,0x5e,0xff},math.random(100)-50,(math.random(1000)-500)/2,math.random()*math.pi),
-      gas4 = poly.new(screenWidth/2,screenHeight/2,{0,-12,-12*math.cos(math.rad(60)),6,12*math.cos(math.rad(60)),6},"line",{0xfc,0xf7,0x5e,0xff},math.random(100)-50,(math.random(1000)-500)/2,math.random()*math.pi),
-      gas5 = poly.new(screenWidth/2,screenHeight/2,{0,-12,-12*math.cos(math.rad(60)),6,12*math.cos(math.rad(60)),6},"line",{0xfc,0xf7,0x5e,0xff},math.random(100)-50,(math.random(1000)-500)/2,math.random()*math.pi),
-      gas6 = poly.new(screenWidth/2,screenHeight/2,{0,-12,-12*math.cos(math.rad(60)),6,12*math.cos(math.rad(60)),6},"line",{0xfc,0xf7,0x5e,0xff},math.random(100)-50,(math.random(1000)-500)/2,math.random()*math.pi),
-      gas7 = poly.new(screenWidth/2,screenHeight/2,{0,-12,-12*math.cos(math.rad(60)),6,12*math.cos(math.rad(60)),6},"line",{0xfc,0xf7,0x5e,0xff},math.random(100)-50,(math.random(1000)-500)/2,math.random()*math.pi),
-      gas8 = poly.new(screenWidth/2,screenHeight/2,{0,-12,-12*math.cos(math.rad(60)),6,12*math.cos(math.rad(60)),6},"line",{0xfc,0xf7,0x5e,0xff},math.random(100)-50,(math.random(1000)-500)/2,math.random()*math.pi),
-      gas9 = poly.new(screenWidth/2,screenHeight/2,{0,-12,-12*math.cos(math.rad(60)),6,12*math.cos(math.rad(60)),6},"line",{0xfc,0xf7,0x5e,0xff},math.random(100)-50,(math.random(1000)-500)/2,math.random()*math.pi),
-      gas10 = poly.new(screenWidth/2,screenHeight/2,{0,-12,-12*math.cos(math.rad(60)),6,12*math.cos(math.rad(60)),6},"line",{0xfc,0xf7,0x5e,0xff},math.random(100)-50,(math.random(1000)-500)/2,math.random()*math.pi),
-      gas11 = poly.new(screenWidth/2,screenHeight/2,{0,-12,-12*math.cos(math.rad(60)),6,12*math.cos(math.rad(60)),6},"line",{0xfc,0xf7,0x5e,0xff},math.random(100)-50,(math.random(1000)-500)/2,math.random()*math.pi),
-      gas12 = poly.new(screenWidth/2,screenHeight/2,{0,-12,-12*math.cos(math.rad(60)),6,12*math.cos(math.rad(60)),6},"line",{0xfc,0xf7,0x5e,0xff},math.random(100)-50,(math.random(1000)-500)/2,math.random()*math.pi),
-      gas13 = poly.new(screenWidth/2,screenHeight/2,{0,-12,-12*math.cos(math.rad(60)),6,12*math.cos(math.rad(60)),6},"line",{0xfc,0xf7,0x5e,0xff},math.random(100)-50,(math.random(1000)-500)/2,math.random()*math.pi),
-      gas14 = poly.new(screenWidth/2,screenHeight/2,{0,-12,-12*math.cos(math.rad(60)),6,12*math.cos(math.rad(60)),6},"line",{0xfc,0xf7,0x5e,0xff},math.random(100)-50,(math.random(1000)-500)/2,math.random()*math.pi),
-      gas15 = poly.new(screenWidth/2,screenHeight/2,{0,-12,-12*math.cos(math.rad(60)),6,12*math.cos(math.rad(60)),6},"line",{0xfc,0xf7,0x5e,0xff},math.random(100)-50,(math.random(1000)-500)/2,math.random()*math.pi),
-      gas16 = poly.new(screenWidth/2,screenHeight/2,{0,-12,-12*math.cos(math.rad(60)),6,12*math.cos(math.rad(60)),6},"line",{0xfc,0xf7,0x5e,0xff},math.random(100)-50,(math.random(1000)-500)/2,math.random()*math.pi),
-      gas17 = poly.new(screenWidth/2,screenHeight/2,{0,-12,-12*math.cos(math.rad(60)),6,12*math.cos(math.rad(60)),6},"line",{0xfc,0xf7,0x5e,0xff},math.random(100)-50,(math.random(1000)-500)/2,math.random()*math.pi),
-      gas18 = poly.new(screenWidth/2,screenHeight/2,{0,-12,-12*math.cos(math.rad(60)),6,12*math.cos(math.rad(60)),6},"line",{0xfc,0xf7,0x5e,0xff},math.random(100)-50,(math.random(100)-500)/2,math.random()*math.pi),
-      gas19 = poly.new(screenWidth/2,screenHeight/2,{0,-12,-12*math.cos(math.rad(60)),6,12*math.cos(math.rad(60)),6},"line",{0xfc,0xf7,0x5e,0xff},math.random(100)-50,(math.random(1000)-500)/2,math.random()*math.pi),
-      gas20 = poly.new(screenWidth/2,screenHeight/2,{0,-12,-12*math.cos(math.rad(60)),6,12*math.cos(math.rad(60)),6},"line",{0xfc,0xf7,0x5e,0xff},math.random(100)-50,(math.random(1000)-500)/2,math.random()*math.pi),
-      gas21 = poly.new(screenWidth/2,screenHeight/2,{0,-12,-12*math.cos(math.rad(60)),6,12*math.cos(math.rad(60)),6},"line",{0xfc,0xf7,0x5e,0xff},math.random(100)-50,(math.random(1000)-500)/2,math.random()*math.pi),
-      gas22 = poly.new(screenWidth/2,screenHeight/2,{0,-12,-12*math.cos(math.rad(60)),6,12*math.cos(math.rad(60)),6},"line",{0xfc,0xf7,0x5e,0xff},math.random(100)-50,(math.random(1000)-500)/2,math.random()*math.pi)
+      gas1  = make_gas(),
+      gas2  = make_gas(),
+      gas3  = make_gas(),
+      gas4  = make_gas(),
+      gas5  = make_gas(),
+      gas6  = make_gas(),
+      gas7  = make_gas(),
+      gas8  = make_gas(),
+      gas9  = make_gas(),
+      gas10 = make_gas(),
+      gas11 = make_gas(),
+      gas12 = make_gas(),
+      gas13 = make_gas(),
+      gas14 = make_gas(),
+      gas15 = make_gas(),
+      gas16 = make_gas(),
+      gas17 = make_gas(),
+      gas18 = make_gas(),
+      gas19 = make_gas(),
+      gas20 = make_gas(),
+      gas21 = make_gas(),
+      gas22 = make_gas()
    }
 
    ptList = {}
@@ -1857,3 +1930,44 @@ function rand(seed)
    
    return n
 end
+
+button = {
+   new = function(x,y,w,h, callback, text, image)
+      uid_counter = 1 + uid_counter
+   
+      return setmetatable({id = uid_counter, x = x, y = y,
+			   w = w, h = h, callback = callback,
+			   text = text, image = image},button)
+   end,
+
+   show = function(self)
+      monitors.draw         [self.id] = self
+      monitors.mousereleased[self.id] = self
+   end,
+
+   hide = function(self)
+      monitors.draw         [self.id] = nil
+      monitors.mousereleased[self.id] = nil
+   end,
+
+   mousereleased = function(self, x, y, key)
+      if x > self.x and x < self.x + self.w and
+	 y > self.y and y < self.y + self.h
+      then
+	 self.callback(key)
+      end
+   end,
+
+   draw = function(self)
+      love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
+
+      if self.image then
+	 love.graphics.draw(self.image, self.x, self.y)
+      end
+      
+      if self.text then
+	 love.graphics.printf(self.text, self.x, self.y, self.w, "center")
+      end
+   end
+}
+button.__index = button
