@@ -5,6 +5,12 @@ love src/
 #+end_src
 
 #+RESULTS:
+: Error: [string "boot.lua"]:577: Cannot load game at path '/home/infinite_users/Documents/Atena Swoja/Projects/Astrorush/Astrorush/src/src/'.
+: Make sure a folder exists at the specified path.
+: stack traceback:
+: [C]: in function 'error'
+: [C]: in function 'xpcall'
+: [C]: in function 'xpcall'
 
 * Edit
 
@@ -12,6 +18,19 @@ love src/
 
 * Issues
 
+** TODO Shaders are no longer working
+** TODO Fix player incentives by changing ships dimensions
+
+Now best play is to fly sideways, because it gives the twice as much catching area for asteroids.
+
+** TODO Laser should be drawn using multiple lines with increasing width and decreasing opacity
+** TODO Menu before game starts
+** TODO Fullscreen does not scale properly
+** TODO Asteroids should be bigger and more sparse
+** TODO Some asteroids travel with huge velocity, scanners show incoming impact
+** TODO UI needs rotation speed indicator
+** TODO Fuel should be represented by GUI element other than text
+** TODO Side thrusters should not increase speed by much
 ** TODO Refactorization of code to allow easier modifications
 ** TODO Menu needs start button
 ** TODO Menu needs help button/screen
@@ -30,13 +49,12 @@ Music in main menu must be different from game music.
 ** TODO Window cannot be resized
 ** TODO Laser doesn't make any sound
 ** TODO Crashing doesn't make any sound
-** TODO Fullscreen does not scale properly
 ** TODO Window icon doesn't load
 ** TODO More unified style - vector over pixel-art
-** TODO UI needs to be reworked
 ** TODO Automatic updates with GitHub
 ** TODO Dim laser outline appears on press, laser shoots on release
-** DONE Menu before game starts
+** TODO UI needs to be reworked
+** DONE After implementing rendering to canvas, everything turned green
 ** DONE Cannot exit a game
 ** DONE Error when entering name for a best score
 
@@ -61,3 +79,26 @@ CLOCK: [2020-09-19 Sat 22:52]--[2020-09-19 Sat 22:57] =>  0:05
 :END:
 ** DONE All colors are white
 ** DONE Booting does not work   
+
+* Missing assets
+
+Those assets need to be created
+
+- sounds
+  - laser sound
+  - asteroid crashing sound
+  - ship exploding sound
+- design mock-ups
+  - GUI design project
+  - menu deign project
+- music
+  - main menu music
+  - more fitting game music
+- misc
+  - vector font
+- graphics
+  - title + logo for main menu
+
+
+
+
