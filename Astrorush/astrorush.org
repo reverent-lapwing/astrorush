@@ -1,3 +1,5 @@
+#+TODO: TODO WIP | DONE REJECTED
+
 * Run
 
 #+begin_src sh :tangle run.sh :results output :session y
@@ -17,46 +19,211 @@ love src/
 [[file:src/][src/]]
 
 * Issues
+** Astrorush Remastered
+*** TODO Define logic as flow
 
-** TODO Shaders are no longer working
-** TODO Fix player incentives by changing ships dimensions
 
-Now best play is to fly sideways, because it gives the twice as much catching area for asteroids.
 
-** TODO Laser should be drawn using multiple lines with increasing width and decreasing opacity
-** TODO Menu before game starts
-** TODO Fullscreen does not scale properly
-** TODO Asteroids should be bigger and more sparse
-** TODO Some asteroids travel with huge velocity, scanners show incoming impact
-** TODO UI needs rotation speed indicator
-** TODO Fuel should be represented by GUI element other than text
-** TODO Side thrusters should not increase speed by much
-** TODO Refactorization of code to allow easier modifications
-** TODO Menu needs start button
-** TODO Menu needs help button/screen
-** TODO Menu needs settings button/screen
-** TODO Background in menu
-** TODO Pause menu have all buttons from main menu
-** TODO "Back to main menu" from pause
-** TODO "Back to main menu" from death screen
-** TODO No music in main menu
+*** TODO Show trajectory for all moving objects
+*** TODO UI needs to be reworked
+
+:LOGBOOK:
+CLOCK: [2020-10-14 Wed 22:39]--[2020-10-14 Wed 22:59] =>  0:20
+:END:
+
+Game screen needs a UI inspired by a cockpit controls. UI needs following elements:
+- [ ] Fuel indicator
+  - [ ] Estimated fuel depletion time at current rate
+- [X] rotation speed
+- [X] positional speed indicator
+- [ ] sensors on/off
+  - [ ] imact indicator - impending collision, if you continue on this path with current speed
+- [ ] music
+- [ ] self destruct
+- [ ] points
+- [ ] help
+
+#+begin_src sh
+love poc/ 
+#+end_src
+
+#+RESULTS:
+
+cos(x) = xs/r
+sin(x) = ys/r
+
+
+#+begin_src lua :tangle poc/main.lua
+  rs = 0
+  xs = 0
+  ys = 0
+
+  function infinite_to_finite(x)
+     return x / (math.abs(x)+1)
+  end
+
+  function love.draw()
+     love.graphics.print(tostring(xs).." "..tostring(ys))
+
+     love.graphics.translate(love.graphics.getWidth()/2, love.graphics.getHeight()/2)
+
+     love.graphics.setColor(1,1,1,1)
+     love.graphics.circle("fill", 0,0,50)
+
+     love.graphics.setColor(1,0,0,1)
+
+     speed = math.sqrt(math.pow(xs,2) + math.pow(ys,2))
+
+     r = infinite_to_finite(speed)
+
+     cos = xs/speed
+     sin = ys/speed
+
+     love.graphics.line(0,0, 50 * r * cos, 50 * r * sin)
+  end
+
+  function love.keypressed(key)
+     if key == "q" then
+        rs = rs - 0.1
+     end
+
+     if key == "e" then
+        rs = rs + 0.1
+     end
+
+     if key == "w" then
+        ys = ys - 0.1
+     end
+
+     if key == "s" then
+        ys = ys + 0.1
+     end
+
+     if key == "a" then
+        xs = xs - 0.1
+     end
+
+     if key == "d" then
+        xs = xs + 0.1
+     end
+  end
+#+end_src
+
+*** TODO Pulsating shield
+*** TODO Controler support
+*** TODO Online multiplayer
+*** TODO Global leaderboard
+*** TODO Configuration
+**** TODO Rebinding keys
+**** TODO Colorblind mode
+
+Hue selection for all elements
+
+*** TODO Tutorial
+*** TODO UI scaling
+
+x1, x1.5, x2
+
+*** TODO Fuel should be represented by GUI element other than text
+*** TODO Menu needs start button
+*** TODO Menu needs help button/screen
+*** TODO Menu needs settings button/screen
+*** TODO Background in menu
+*** TODO Pause menu have all buttons from main menu
+*** TODO "Back to main menu" from pause
+*** TODO "Back to main menu" from death screen
+*** TODO No music in main menu
 
 Music in main menu must be different from game music.
 
-** TODO No sound effects on button press
-** TODO No visual effect on button hover
-** TODO Window should fit the screen by default
-** TODO Window cannot be resized
-** TODO Laser doesn't make any sound
-** TODO Crashing doesn't make any sound
-** TODO Window icon doesn't load
-** TODO More unified style - vector over pixel-art
-** TODO Automatic updates with GitHub
-** TODO Dim laser outline appears on press, laser shoots on release
-** TODO UI needs to be reworked
-** DONE After implementing rendering to canvas, everything turned green
-** DONE Cannot exit a game
-** DONE Error when entering name for a best score
+*** TODO No sound effects on button press
+*** TODO No visual effect on button hover
+*** TODO Window cannot be resized
+*** TODO Laser doesn't make any sound
+*** TODO Crashing doesn't make any sound
+*** TODO Window icon doesn't load
+*** TODO More unified style - vector over pixel-art
+*** TODO Automatic updates with GitHub
+*** TODO Dim laser outline appears on press, laser shoots on release
+*** TODO Shaders are no longer working
+*** DONE Window should fit the screen by default
+*** DONE UI needs rotation speed indicator
+*** DONE Refactorization of code to allow easier modifications
+*** DONE Laser should be drawn using multiple lines with increasing width and decreasing opacity
+:LOGBOOK:
+CLOCK: [2020-10-14 Wed 19:41]--[2020-10-14 Wed 20:23] =>  0:42
+:END:
+
+#+begin_src sh
+love poc/
+#+end_src
+
+#+RESULTS:
+
+#+begin_src lua
+  laser_line_s = {}
+
+  laser_line_c = {
+     id = 0,
+
+     new = function(self, x, y)
+        this = setmetatable({id = id, age = 0, ttl = 0.2, x = x, y = y, width = 6, opacity = 1}, laser_line_c)
+
+        laser_line_s[self.id] = this
+
+        self.id = self.id + 1 
+     end,
+
+     update = function(self, e)
+        self.age = self.age + e
+
+        if self.ttl > self.age then
+           laser_line_s[self.id] = nil
+        end
+     end,
+
+     draw = function(self)
+        if self.ttl > self.age then
+           local d_opacity = self.opacity * (1 - self.age/self.ttl)
+           local d_width = self.width * (1 - self.age/self.ttl)
+
+           lines = 10
+           factor = 0.5
+
+           for i = 0, lines do
+              love.graphics.setColor(1, 0, 0, d_opacity)
+              love.graphics.setLineWidth(d_width)
+              love.graphics.line(0, 0, self.x*1000, self.y*1000)
+
+              d_opacity = d_opacity * factor
+              d_width = d_width * (1+factor)
+           end
+        end
+     end
+  }
+  laser_line_c.__index = laser_line_c
+
+  function love.draw()
+     for _,v in pairs(laser_line_s) do
+        v:draw()
+     end
+  end
+
+  function love.update(e)
+     for _,v in pairs(laser_line_s) do
+        v:update(e)
+     end
+  end
+
+  function love.mousepressed(x, y)
+     laser_line_c:new(x, y)
+  end
+#+end_src
+
+*** DONE Side thrusters should not increase speed by much
+*** DONE After implementing rendering to canvas, everything turned green
+*** DONE Cannot exit a game
+*** DONE Error when entering name for a best score
 
 #+RESULTS:
 #+begin_example
@@ -72,14 +239,43 @@ main.lua:1258: in function <main.lua:1243>
 [C]: in function 'xpcall'
 #+end_example
 
-** DONE Space button doesn't work
-** DONE Laser doesn't work
+*** DONE Space button doesn't work
+*** DONE Laser doesn't work
 :LOGBOOK:
 CLOCK: [2020-09-19 Sat 22:52]--[2020-09-19 Sat 22:57] =>  0:05
 :END:
-** DONE All colors are white
-** DONE Booting does not work   
+*** DONE All colors are white
+*** DONE Booting does not work
 
+** Astrorush - San Gam-Saan
+*** TODO Stars shouldn't accelereate with the ship
+
+They are too far away! More realistic movement needed.
+
+*** TODO Mothership travels around the sun in 1 day
+
+*** TODO Asteroids travel around the sun in 2 years
+
+*** TODO Distance from the sun - 3 AU
+
+*** TODO Astreroids are more spread out
+
+*** TODO 3D low-poly artwork rendered as image
+*** TODO San Gam-Saan title artwork
+
+- Gold mountain raising to the sky, stars in the sky
+- Rocket launch, tail looks like a mountain
+
+*** TODO Fix player incentives by changing ships dimensions
+
+Now best play is to fly sideways, because it gives twice as much catching area for asteroids.
+
+*** TODO Asteroids should be bigger and more sparse
+*** TODO Menu before game starts
+*** TODO Fullscreen does not scale properly
+*** TODO Some asteroids travel with huge velocity, scanners show incoming impact
+*** TODO Sirens on incoming impact
+*** TODO Sensors are displayed at the edge of the screen, not around the ship
 * Missing assets
 
 Those assets need to be created
@@ -98,6 +294,7 @@ Those assets need to be created
   - vector font
 - graphics
   - title + logo for main menu
+
 
 
 
